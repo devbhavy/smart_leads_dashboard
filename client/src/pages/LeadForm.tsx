@@ -19,8 +19,15 @@ export default function LeadForm({ initial, onSubmit, onClose }: Props) {
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        setLoading(true);
         setError("");
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(form.email)) {
+            setError("Please enter a valid email");
+            return;
+        }
+    
+        setLoading(true);
         try {
             await onSubmit(form);
             onClose();
