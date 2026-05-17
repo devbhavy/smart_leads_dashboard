@@ -2,8 +2,12 @@ import express from "express";
 import { User } from "../lib/mongoose.js";
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
-import { signInMiddleware, signUpMiddleware } from "../middlewares/middleware.js";
+import { authMiddleware, signInMiddleware, signUpMiddleware } from "../middlewares/middleware.js";
 const userRouter = express.Router();
+
+userRouter.get("/me", authMiddleware, async function(req: any, res) {
+    res.json({ role: req.user.role, username: req.user.userName });
+});
 
 userRouter.post("/signup",signUpMiddleware,async function(req:any,res){
     const {username,email,role} = req.body;

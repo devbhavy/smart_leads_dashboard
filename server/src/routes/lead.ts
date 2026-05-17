@@ -12,6 +12,9 @@ leadRouter.get("/", async (req: any, res: Response) => {
         const { status, source, search, sort, page = 1, limit = 10 } = req.query;
 
         const filter: Record<string, any> = {};
+        if (req.user.role !== "admin") {
+            filter.createdBy = req.user._id;
+        }
 
         if (status) filter.status = status;
         if (source) filter.source = source;
