@@ -42,6 +42,29 @@ leadRouter.get("/", async (req: any, res: Response) => {
     }
 });
 
+leadRouter.get("/export", async (req: any, res: Response) => {
+    try {
+        const leads = await Lead.find({ createdBy: req.user._id });
+
+        const csv = [
+            ["Name", "Email", "Status", "Source", "Created At"].join(","),
+            ...leads.map(lead => [
+                lead.name,
+                lead.email,
+                lead.status,
+                lead.source,
+                new Date(lead.createdAt).toLocaleDateString()
+            ].join(","))
+        ].join("\n");
+
+        res.setHeader("Content-Type", "text/csv");
+        res.setHeader("Content-Disposition", "attachment; filename=leads.csv");
+        res.status(200).send(csv);
+    } catch (error) {
+        res.status(500).json({ msg: "Server error" });
+    }
+});
+
 leadRouter.get("/:id", async (req: Request, res: Response) => {
     try {
         const lead = await Lead.findById(req.params.id);
